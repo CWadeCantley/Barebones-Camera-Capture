@@ -25,27 +25,18 @@
                                     <action selector="btnPictureTouch:" destination="BYZ-38-t0r" eventType="touchUpInside" id="69Z-cr-zb2"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RAb-fS-nr6">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RAb-fS-nr6">
                                 <rect key="frame" x="12" y="38" width="577" height="197"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="197" id="QxA-gc-uAR"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hcI-k1-1eL">
-                                <rect key="frame" x="255" y="345" width="91" height="30"/>
-                                <state key="normal" title="Take Another"/>
-                                <connections>
-                                    <action selector="btnTakeAnother:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3bi-Xg-C2W"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="RAb-fS-nr6" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="18" id="9Qb-rl-Laa"/>
                             <constraint firstAttribute="trailingMargin" secondItem="RAb-fS-nr6" secondAttribute="trailing" constant="-9" id="LDj-Q6-052"/>
                             <constraint firstItem="EdA-fU-8b9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="V4a-xy-EIC"/>
-                            <constraint firstItem="hcI-k1-1eL" firstAttribute="top" secondItem="EdA-fU-8b9" secondAttribute="bottom" constant="30" id="ey5-gj-rbz"/>
-                            <constraint firstItem="hcI-k1-1eL" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="iWy-gF-zzr"/>
                             <constraint firstItem="EdA-fU-8b9" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="jTT-LX-Gkg"/>
                             <constraint firstItem="RAb-fS-nr6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-8" id="oYa-ch-FIm"/>
                         </constraints>
