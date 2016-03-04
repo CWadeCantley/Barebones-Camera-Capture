@@ -21,7 +21,7 @@ class CameraOverlay: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     //MARK: Internal Variables
     
-    //Setting up the delegate reference to be used later on.
+    //Setting up the delegate reference to be used later.
     internal var delegate: CameraOverlayDelegate?
     
     
