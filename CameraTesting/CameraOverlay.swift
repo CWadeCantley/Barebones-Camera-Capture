@@ -91,7 +91,9 @@ class CameraOverlay: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
                     let dataProvider = CGDataProviderCreateWithCFData(imageData)
                     let cgImageRef = CGImageCreateWithJPEGDataProvider(dataProvider, nil, true, CGColorRenderingIntent.RenderingIntentDefault)
-                    let image = UIImage(CGImage: cgImageRef!, scale: 1.0, orientation: UIImageOrientation.Right)
+                    //The 2.0 scale halves the scale of the image.  Where as the 1.0 gives you the full size.
+                    let image = UIImage(CGImage: cgImageRef!, scale: 2.0, orientation: UIImageOrientation.Up)
+                    
                     
                     // What size is this image.
                     let imageSize = image.size
@@ -225,42 +227,6 @@ class CameraOverlay: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
     }
     
-    
-    internal func cropToBounds(image: UIImage, width: Double, height: Double) -> UIImage {
-        
-        let contextImage: UIImage = UIImage(CGImage: image.CGImage!)
-        
-        let contextSize: CGSize = contextImage.size
-        
-        var posX: CGFloat = 0.0
-        var posY: CGFloat = 0.0
-        var cgwidth: CGFloat = CGFloat(width)
-        var cgheight: CGFloat = CGFloat(height)
-        
-        // See what size is longer and create the center off of that
-        if contextSize.width > contextSize.height {
-            posX = ((contextSize.width - contextSize.height) / 2)
-            posY = 0
-            cgwidth = contextSize.width
-            cgheight = contextSize.height
-        } else {
-            posX = 0
-            posY = ((contextSize.height - contextSize.width) / 2)
-            cgwidth = contextSize.width
-            cgheight = contextSize.height
-        }
-        
-        let rect: CGRect = CGRectMake(posX, posY, cgwidth, cgheight)
-        
-        // Create bitmap image from context using the rect
-        let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage, rect)!
-        
-        // Create a new image based on the imageRef and rotate back to the original orientation
-        let newImage: UIImage = UIImage(CGImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
-        
-        return newImage
-    }
-
     
 }
 
