@@ -17,7 +17,6 @@ protocol CameraOverlayDelegate: class {
 }
 
 class CameraOverlay: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
-
     
     //MARK: Internal Variables
     
@@ -49,6 +48,7 @@ class CameraOverlay: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     //MARK: - Instantiation Methods
     init(parentView: UIView){
         
+
         //Instantiate the reference to the passed-in UIView
         self.view = parentView
         
@@ -93,8 +93,20 @@ class CameraOverlay: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                     let cgImageRef = CGImageCreateWithJPEGDataProvider(dataProvider, nil, true, CGColorRenderingIntent.RenderingIntentDefault)
                     let image = UIImage(CGImage: cgImageRef!, scale: 1.0, orientation: UIImageOrientation.Right)
                     
+                    // What size is this image.
+                    let imageSize = image.size
+                    let imageScale = image.scale
+                    let yCoord = (imageSize.height - ((imageSize.width*2)/3))/2
+                    let getRect = CGRectMake(0, yCoord, imageSize.width, ((imageSize.width*2)/3))
+                    let rect = CGRectMake(getRect.origin.x*imageScale, getRect.origin.y*imageScale, getRect.size.width*imageScale, getRect.size.height*imageScale)
+                    let imageRef = CGImageCreateWithImageInRect(image.CGImage, rect)
+                    //let newImage = UIImage(CGImage: imageRef!)
+                    
+                    //This app forces the user to use landscapto take pictures so this simply turns the image so that it looks correct when we take the image.
+                    let newImage: UIImage = UIImage(CGImage: imageRef!, scale: image.scale, orientation: UIImageOrientation.Down)
+                    
                     //Pass the image up to the delegate.
-                    self.delegate?.cameraOverlayImage(image)
+                    self.delegate?.cameraOverlayImage(newImage)
                     
                     //stop the session
                     self.session.stopRunning()
@@ -120,8 +132,13 @@ class CameraOverlay: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         self.view.addSubview(self.boxView)
         
         //Add Camera Preview View
-        self.previewView = UIView(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height))
-        self.previewView.contentMode = UIViewContentMode.ScaleAspectFit
+        // This sets up the previewView to be a 3:2 aspect ratio
+        let newHeight = UIScreen.mainScreen().bounds.size.width / 2 * 3
+        self.previewView = UIView(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, newHeight))
+        self.previewView.backgroundColor = UIColor.cyanColor()
+
+        
+        self.previewView.contentMode = UIViewContentMode.ScaleToFill
         self.view.addSubview(previewView)
         
         
@@ -191,16 +208,58 @@ class CameraOverlay: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         //Now show layers that were setup in the previewView, and mask it to the boundary of the previewView layer.
         let rootLayer :CALayer = self.previewView.layer
         rootLayer.masksToBounds=true
+
         
         //put a live video capture based on the current session.
         self.previewLayer = AVCaptureVideoPreviewLayer(session: self.session);
+        
+        // Determine how to fill the previewLayer.  In this case, I want to fill out the space of the previewLayer.
+        self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         self.previewLayer.frame = rootLayer.bounds
+
+        
+        //Put the sublayer into the previewLayer
         rootLayer.addSublayer(self.previewLayer)
         
         session.startRunning()
         
     }
     
+    
+    internal func cropToBounds(image: UIImage, width: Double, height: Double) -> UIImage {
+        
+        let contextImage: UIImage = UIImage(CGImage: image.CGImage!)
+        
+        let contextSize: CGSize = contextImage.size
+        
+        var posX: CGFloat = 0.0
+        var posY: CGFloat = 0.0
+        var cgwidth: CGFloat = CGFloat(width)
+        var cgheight: CGFloat = CGFloat(height)
+        
+        // See what size is longer and create the center off of that
+        if contextSize.width > contextSize.height {
+            posX = ((contextSize.width - contextSize.height) / 2)
+            posY = 0
+            cgwidth = contextSize.width
+            cgheight = contextSize.height
+        } else {
+            posX = 0
+            posY = ((contextSize.height - contextSize.width) / 2)
+            cgwidth = contextSize.width
+            cgheight = contextSize.height
+        }
+        
+        let rect: CGRect = CGRectMake(posX, posY, cgwidth, cgheight)
+        
+        // Create bitmap image from context using the rect
+        let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage, rect)!
+        
+        // Create a new image based on the imageRef and rotate back to the original orientation
+        let newImage: UIImage = UIImage(CGImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+        
+        return newImage
+    }
 
     
 }
